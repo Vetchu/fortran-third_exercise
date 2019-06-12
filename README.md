@@ -3,13 +3,14 @@
 Third homework for Fortran university course focusing on Integration and coarrays in Fortran.
 
 ## Project Structure ##
-├── Rakefile
-├── README.md
-├── res
-├── src
-│   ├── interfaces.F90
-│   └── main.f90
-└── tester.sh
+
+    ├── Rakefile
+    ├── README.md
+    ├── res
+    ├── src
+    │   ├── interfaces.F90
+    │   └── main.f90
+    └── tester.sh
 
 ## QuickSetup ##
 

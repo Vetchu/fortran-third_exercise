@@ -61,7 +61,6 @@ CONTAINS
 
         h=abs(ibeg-iend)
         value=(myfun(ibeg)+myfun(iend))/2*h
- !       write(*,*) h,value
     end function trap 
     function rect(ibeg,iend,myfun,p) result (value)
         IMPLICIT NONE
@@ -75,7 +74,6 @@ CONTAINS
 
         h=abs(ibeg-iend)
         value=myfun((ibeg+iend)/2)*h
-!        write(*,*) ibeg, iend, h, myfun((ibeg+iend)/2), value
     end function rect
 END MODULE INTERFACES
 

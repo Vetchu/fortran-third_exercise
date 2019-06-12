@@ -32,9 +32,8 @@ PROGRAM MAIN
     !        write (*, '( / "Input test value: ")', advance="no" )
     !        read (*, *) input
     !    end if
-    input=1
     syncall()
-    if ( input < 0 ) then
+    if (input== 0 ) then
         i_ptr => rect
     else
         i_ptr => trap
@@ -54,8 +53,8 @@ PROGRAM MAIN
         do i=2,num_images()
         res=res+res[i]
         end do
-        write (*, *)res 
-        write (*,*) num_images()
+        write (*,*) "RESULT:",res 
+        write (*,*) "IMAGES:",num_images()
     end if
 
     !procedure(fun_int):: sinus,square

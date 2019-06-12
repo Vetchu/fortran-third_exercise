@@ -31,7 +31,7 @@ MODULE INTERFACES
     end  interface
 
 CONTAINS
-    function rectangular(ibeg,iend,myfun,p) result (value)
+    function trap(ibeg,iend,myfun,p) result (value)
         IMPLICIT NONE
         real(kind=8),intent(in)  ::  ibeg
         real(kind=8),intent(in)  ::  iend
@@ -39,7 +39,43 @@ CONTAINS
         integer(kind=4),intent(in)  ::  p
         real(kind=8) ::  value
 
-        value=(myfun(ibeg)+myfun(iend))/2*abs(ibeg-iend)
-    end function rectangular
+        real::h
+        integer::i
+
+        h=abs(ibeg-iend)
+        value=0
+        do i=this_image(),N,num_images()
+        value=value+(myfun(ibeg+h*i)+myfun(ibeg+h*(i+1)))/2*h
+        end do
+        syncall()
+        if(this_image==1)
+        do i=this_image()+1,num_images()
+        value=value+value[i]
+        end do
+    end if
+end function trap 
+function rect(ibeg,iend,myfun,p) result (value)
+    IMPLICIT NONE
+    real(kind=8),intent(in)  ::  ibeg
+    real(kind=8),intent(in)  ::  iend
+    procedure(fun_int) ::  myfun
+    integer(kind=4),intent(in)  ::  p
+    real(kind=8) ::  value
+
+    real::h
+    integer::i
+
+    h=abs(ibeg-iend)
+    value=0
+    do i=this_image(),N,num_images()
+    value=value+myfun(ibeg+h*(i+1/2))*h
+    end do
+    syncall()
+    if(this_image==1)
+    do i=this_image()+1,num_images()
+    value=value+value[i]
+    end do
+end if
+end function rect
 END MODULE INTERFACES
 

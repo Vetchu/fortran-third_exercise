@@ -1,0 +1,21 @@
+0 - rectangular
+1 - trapezoidal
+
+FIRST - POLYNOMIAL
+SECOND - E^X
+THIRD - SIN(X)
+
+TESTING 0
+ RESULT:   333.32500496692955     
+ IMAGES:           1
+ RESULT:   22016.291521461022     
+ IMAGES:           1
+ RESULT:   1.8398380598531630     
+ IMAGES:           1
+TESTING 1
+ RESULT:   333.35000496730208     
+ IMAGES:           1
+ RESULT:   22043.817619749912     
+ IMAGES:           1
+ RESULT:   1.8375387413629165     
+ IMAGES:           1

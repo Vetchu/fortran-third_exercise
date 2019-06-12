@@ -54,6 +54,12 @@ Third homework for Fortran university course focusing on Integration and coarray
  sin(x)
  
 	 1.839
- 
+
+	 
+### Notes ###	 
+To fully utilize coarrays power please use 
+
+    $ cafrun -n imgNum ./main Mode ibeg iend subintervals function
+    
 ## Conclusion ##
 Given such starting conditions, we see clear difference between two Integration styles, yet none proves to be better in all cases, yet overall Rectangular one appears to be the winner here (despite the theory).

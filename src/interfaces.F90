@@ -1,11 +1,10 @@
 MODULE INTERFACES
     IMPLICIT NONE
-    private
 
     INTEGER:: N=100
-    public :: rectangular
-    private :: integration
-    interface integration
+    public :: rect,trap
+    private :: integrate
+    interface
         function integrate  ( ibeg ,  iend , myfun , p)result( value)
             implicit  none
             !  beginning  o f  i n t e g r a t i o n  i n t e r v a l
@@ -22,7 +21,7 @@ MODULE INTERFACES
     end  interface
 
     public :: fun_int
-    interface fun_int
+    interface 
         function fun_int ( x )result( y )
             implicit  none
             real(kind= 8) ,intent(in)  ::  x
@@ -31,6 +30,26 @@ MODULE INTERFACES
     end  interface
 
 CONTAINS
+        function my_pol(x) result(y)
+        implicit none
+        real(kind=8), intent(in) :: x
+        real(kind=8) :: y
+        y = x**2
+    end function
+
+    function my_exp(x) result(y)
+        implicit none
+        real(kind=8), intent(in) :: x
+        real(kind=8) :: y
+        y = exp(x)
+    end function
+
+    function my_sin(x) result(y)
+        implicit none
+        real(kind=8), intent(in) :: x
+        real(kind=8) :: y
+        y = sin(x)
+    end function
     function trap(ibeg,iend,myfun,p) result (value)
         IMPLICIT NONE
         real(kind=8),intent(in)  ::  ibeg
@@ -48,34 +67,34 @@ CONTAINS
         value=value+(myfun(ibeg+h*i)+myfun(ibeg+h*(i+1)))/2*h
         end do
         syncall()
-        if(this_image==1)
-        do i=this_image()+1,num_images()
-        value=value+value[i]
+        if(this_image()==1) then
+            do i=this_image()+1,num_images()
+            value=value+value[i]
+            end do
+        end if
+    end function trap 
+    function rect(ibeg,iend,myfun,p) result (value)
+        IMPLICIT NONE
+        real(kind=8),intent(in)  ::  ibeg
+        real(kind=8),intent(in)  ::  iend
+        procedure(fun_int) ::  myfun
+        integer(kind=4),intent(in)  ::  p
+        real(kind=8) ::  value
+
+        real::h
+        integer::i
+
+        h=abs(ibeg-iend)
+        value=0
+        do i=this_image(),N,num_images()
+        value=value+myfun(ibeg+h*(i+1/2))*h
         end do
-    end if
-end function trap 
-function rect(ibeg,iend,myfun,p) result (value)
-    IMPLICIT NONE
-    real(kind=8),intent(in)  ::  ibeg
-    real(kind=8),intent(in)  ::  iend
-    procedure(fun_int) ::  myfun
-    integer(kind=4),intent(in)  ::  p
-    real(kind=8) ::  value
-
-    real::h
-    integer::i
-
-    h=abs(ibeg-iend)
-    value=0
-    do i=this_image(),N,num_images()
-    value=value+myfun(ibeg+h*(i+1/2))*h
-    end do
-    syncall()
-    if(this_image==1)
-    do i=this_image()+1,num_images()
-    value=value+value[i]
-    end do
-end if
-end function rect
+        syncall()
+        if(this_image()==1) then
+            do i=this_image()+1,num_images()
+            value=value+value[i]
+            end do
+        end if
+    end function rect
 END MODULE INTERFACES
 

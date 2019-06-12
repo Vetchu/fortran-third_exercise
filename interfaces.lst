@@ -1,0 +1,233 @@
+Page 1           Source Listing                  MY_POL
+2019-06-12 21:15                                 /tmp/ifortX99RVX.i90
+
+      1 # 1 "src/interfaces.F90"
+      2 MODULE INTERFACES
+      3     IMPLICIT NONE
+      4 
+      5     interface fun_int
+      6         function fun_int ( x )result( y )
+      7             implicit  none
+      8             real(kind= 8) ,intent(in)  ::  x
+      9             real(kind= 8)  ::  y
+     10         end function fun_int
+     11     end  interface
+     12     interface integrate
+     13         function integrate  ( ibeg ,  iend , myfun , p)result( value)
+     14                 IMPORT fun_int
+     15             implicit  none
+     16 !  beginning  o f  i n t e g r a t i o n  i n t e r v a l
+     17             real(kind=8),intent(in)  ::  ibeg
+     18 !  ending  o f  i n t e g r a t i o n  i n t e r v a l
+     19             real(kind=8) ,intent(in)  ::  iend
+     20 !  f u n c t i o n  to  be  i n t e g r a t e d
+     21             procedure ( fun_int )  ::  myfun
+     22 !  polynomial  order
+     23             integer(kind=4) ,intent(in)  ::  p
+     24 !  r e s u l t  o f  i n t e g r a t i o n
+     25             real(kind=8)  ::  value
+     26         end function integrate
+     27     end  interface
+     28 
+     29 
+     30 CONTAINS
+     31     function my_pol(x) result(y)
+     32         implicit none
+     33         real(kind=8), intent(in) :: x
+     34         real(kind=8) :: y
+     35         y = x**2
+     36     end function
+
+Page 2           Source Listing                  MY_POL
+2019-06-12 21:15 Entry Points                    src/interfaces.F90
+
+
+
+ENTRY POINTS
+
+  Name                             
+                                   
+ interfaces_mp_my_pol_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ MY_POL                     Func   31       R(8)            8           scalar                                                      
+ X                          Dummy  31       R(8)            8           scalar   ARG,IN           35                                
+ Y                          Local  34       R(8)            8           scalar                    35                                
+
+Page 3           Source Listing                  MY_POL
+2019-06-12 21:15                                 src/interfaces.F90
+
+     37 
+     38     function my_exp(x) result(y)
+     39         implicit none
+     40         real(kind=8), intent(in) :: x
+     41         real(kind=8) :: y
+     42         y = exp(x)
+     43     end function
+
+
+ENTRY POINTS
+
+  Name                             
+                                   
+ interfaces_mp_my_exp_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ EXP                        Func   42                                   scalar                    42                                
+ MY_EXP                     Func   38       R(8)            8           scalar                                                      
+ X                          Dummy  38       R(8)            8           scalar   ARG,IN           42                                
+ Y                          Local  41       R(8)            8           scalar                    42                                
+
+Page 4           Source Listing                  MY_EXP
+2019-06-12 21:15                                 src/interfaces.F90
+
+     44 
+     45     function my_sin(x) result(y)
+     46         implicit none
+     47         real(kind=8), intent(in) :: x
+     48         real(kind=8) :: y
+     49         y = sin(x)
+     50     end function
+
+
+ENTRY POINTS
+
+  Name                             
+                                   
+ interfaces_mp_my_sin_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ MY_SIN                     Func   45       R(8)            8           scalar                                                      
+ SIN                        Func   49                                   scalar                    49                                
+ X                          Dummy  45       R(8)            8           scalar   ARG,IN           49                                
+ Y                          Local  48       R(8)            8           scalar                    49                                
+
+Page 5           Source Listing                  TRAP
+2019-06-12 21:15                                 src/interfaces.F90
+
+     51     function trap(ibeg,iend,myfun,p) result (value)
+     52             IMPLICIT NONE
+     53         real(kind=8),intent(in)  ::  ibeg
+     54         real(kind=8),intent(in)  ::  iend
+     55         procedure( fun_int) ::  myfun
+     56         real(kind=8) myfun
+     57         integer(kind=4),intent(in)  ::  p
+     58         real(kind=8) ::  value
+     59 
+     60         real::h
+     61 
+     62         h=abs(ibeg-iend)
+     63         value=(myfun(ibeg)+myfun(iend))/2*h
+     64     end function trap
+
+
+ENTRY POINTS
+
+  Name                           
+                                 
+ interfaces_mp_trap_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ ABS                        Func   62                                   scalar                    62                                
+ H                          Local  60       R(4)            4           scalar                    62,63                             
+ IBEG                       Dummy  51       R(8)            8           scalar   ARG,IN           62,63                             
+ IEND                       Dummy  51       R(8)            8           scalar   ARG,IN           62,63                             
+ MYFUN                      Func   51       R(8)            8           scalar   ARG,INOUT                                          
+ MYFUN                      Func   56       R(8)            8           scalar                    63                                
+ P                          Dummy  51       I(4)            4           scalar   ARG,IN                                             
+ TRAP                       Func   51       R(8)            8           scalar                                                      
+ VALUE                      Local  58       R(8)            8           scalar                    63                                
+
+Page 6           Source Listing                  RECT
+2019-06-12 21:15                                 src/interfaces.F90
+
+     65     function rect(ibeg,iend,myfun,p) result (value)
+     66         IMPLICIT NONE
+     67         real(kind=8),intent(in)  ::  ibeg
+     68         real(kind=8),intent(in)  ::  iend
+     69         procedure(fun_int) ::  myfun
+     70         real(kind=8) myfun
+     71         integer(kind=4),intent(in)  ::  p
+     72         real(kind=8) ::  value
+     73 
+     74         real::h
+     75 
+     76         h=abs(ibeg-iend)
+     77         value=myfun((ibeg+iend)/2)*h
+     78     end function rect
+
+
+ENTRY POINTS
+
+  Name                           
+                                 
+ interfaces_mp_rect_             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ ABS                        Func   76                                   scalar                    76                                
+ H                          Local  74       R(4)            4           scalar                    76,77                             
+ IBEG                       Dummy  65       R(8)            8           scalar   ARG,IN           76,77                             
+ IEND                       Dummy  65       R(8)            8           scalar   ARG,IN           76,77                             
+ MYFUN                      Func   65       R(8)            8           scalar   ARG,INOUT                                          
+ MYFUN                      Func   70       R(8)            8           scalar                    77                                
+ P                          Dummy  65       I(4)            4           scalar   ARG,IN                                             
+ RECT                       Func   65       R(8)            8           scalar                                                      
+ VALUE                      Local  72       R(8)            8           scalar                    77                                
+
+Page 7           Source Listing                  RECT
+2019-06-12 21:15                                 src/interfaces.F90
+
+     79 END MODULE INTERFACES
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ INTERFACES                 Module 2                                                                                                
+
+Page 8           Source Listing                  RECT
+2019-06-12 21:15                                 src/interfaces.F90
+
+     80 
+
+Page 9           Source Listing                  RECT
+2019-06-12 21:15 Subprograms/Common Blocks       src/interfaces.F90
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ FUN_INT                    Func   6        R(8)            8           scalar                                                      
+ INTEGRATE                  Func   13       R(8)            8           scalar                                                      
+ INTERFACES                 Module 2                                                                                                
+ MY_EXP                     Func   38       R(8)            8           scalar                                                      
+ MY_POL                     Func   31       R(8)            8           scalar                                                      
+ MY_SIN                     Func   45       R(8)            8           scalar                                                      
+ RECT                       Func   65       R(8)            8           scalar                                                      
+ TRAP                       Func   51       R(8)            8           scalar                                                      
+
+
+COMPILER: Intel(R) Fortran 19.0-1577

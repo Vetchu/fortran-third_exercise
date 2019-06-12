@@ -1,10 +1,16 @@
 MODULE INTERFACES
     IMPLICIT NONE
 
-    public :: rect,trap
-    public :: integrate
+    interface fun_int
+        function fun_int ( x )result( y )
+            implicit  none
+            real(kind= 8) ,intent(in)  ::  x
+            real(kind= 8)  ::  y
+        end function fun_int
+    end  interface
     interface integrate
         function integrate  ( ibeg ,  iend , myfun , p)result( value)
+                IMPORT fun_int
             implicit  none
             !  beginning  o f  i n t e g r a t i o n  i n t e r v a l
             real(kind=8),intent(in)  ::  ibeg
@@ -18,15 +24,7 @@ MODULE INTERFACES
             real(kind=8)  ::  value
         end function integrate
     end  interface
-    
-    public :: fun_int
-    interface 
-        function fun_int ( x )result( y )
-            implicit  none
-            real(kind= 8) ,intent(in)  ::  x
-            real(kind= 8)  ::  y
-        end function fun_int
-    end  interface
+
 
 CONTAINS
     function my_pol(x) result(y)
@@ -50,10 +48,11 @@ CONTAINS
         y = sin(x)
     end function
     function trap(ibeg,iend,myfun,p) result (value)
-        IMPLICIT NONE
+            IMPLICIT NONE
         real(kind=8),intent(in)  ::  ibeg
         real(kind=8),intent(in)  ::  iend
-        procedure(fun_int) ::  myfun
+        procedure( fun_int) ::  myfun
+        !        real(kind=8) myfun
         integer(kind=4),intent(in)  ::  p
         real(kind=8) ::  value
 
@@ -61,12 +60,13 @@ CONTAINS
 
         h=abs(ibeg-iend)
         value=(myfun(ibeg)+myfun(iend))/2*h
-    end function trap 
+    end function trap
     function rect(ibeg,iend,myfun,p) result (value)
         IMPLICIT NONE
         real(kind=8),intent(in)  ::  ibeg
         real(kind=8),intent(in)  ::  iend
         procedure(fun_int) ::  myfun
+        !real(kind=8) myfun
         integer(kind=4),intent(in)  ::  p
         real(kind=8) ::  value
 

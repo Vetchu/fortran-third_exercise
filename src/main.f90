@@ -2,8 +2,9 @@ PROGRAM MAIN
     use interfaces
     IMPLICIT NONE
 
-    procedure (integrate), pointer :: i_ptr => null ()
-    procedure (fun_int), pointer :: f_ptr =>null()
+    procedure (integrate), pointer :: i_ptr
+    procedure (fun_int), pointer :: f_ptr
+    !real(kind=8) :: i_ptr
     real(kind=8) :: h
     real(kind=8),codimension[*] ::res
     integer::input,i,N,func
@@ -11,15 +12,15 @@ PROGRAM MAIN
     CHARACTER(len=10) :: arg
 
     call get_command_argument(1,arg)
-    read(arg(1:10),'(I10)')input 
+    read(arg(1:10),'(I10)')input
     call get_command_argument(2,arg)
     read(arg(1:10),'(f10.0)')ibeg
     call get_command_argument(3,arg)
-    read(arg(1:10),'(f10.0)')iend 
+    read(arg(1:10),'(f10.0)')iend
     call get_command_argument(4,arg)
-    read(arg(1:10),'(I10)')N 
+    read(arg(1:10),'(I10)')N
     call get_command_argument(5,arg)
-    read(arg(1:10),'(I10)')func 
+    read(arg(1:10),'(I10)')func
 
     if(func==0) then
         f_ptr => my_pol
@@ -27,7 +28,7 @@ PROGRAM MAIN
         f_ptr => my_exp
     else
         f_ptr => my_sin
-    end if 
+    end if
     !    if(this_image()==1) then
     !        write (*, '( / "Input test value: ")', advance="no" )
     !        read (*, *) input
@@ -53,7 +54,7 @@ PROGRAM MAIN
         do i=2,num_images()
         res=res+res[i]
         end do
-        write (*,*) "RESULT:",res 
+        write (*,*) "RESULT:",res
         write (*,*) "IMAGES:",num_images()
     end if
 

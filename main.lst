@@ -1,0 +1,115 @@
+Page 1           Source Listing                  MAIN
+2019-06-12 21:15                                 src/main.f90
+
+      1 PROGRAM MAIN
+      2     use interfaces
+      3     IMPLICIT NONE
+      4 
+      5     procedure (integrate), pointer :: i_ptr
+      6     procedure (fun_int), pointer :: f_ptr
+      7     real(kind=8) :: i_ptr
+      8     real(kind=8) :: h
+      9     real(kind=8),codimension[*] ::res
+     10     integer::input,i,N,func
+     11     real(kind=8) :: ibeg, iend
+     12     CHARACTER(len=10) :: arg
+     13 
+     14     call get_command_argument(1,arg)
+     15     read(arg(1:10),'(I10)')input
+     16     call get_command_argument(2,arg)
+     17     read(arg(1:10),'(f10.0)')ibeg
+     18     call get_command_argument(3,arg)
+     19     read(arg(1:10),'(f10.0)')iend
+     20     call get_command_argument(4,arg)
+     21     read(arg(1:10),'(I10)')N
+     22     call get_command_argument(5,arg)
+     23     read(arg(1:10),'(I10)')func
+     24 
+     25     if(func==0) then
+     26         f_ptr => my_pol
+     27     else if(func==1) then
+     28         f_ptr => my_exp
+     29     else
+     30         f_ptr => my_sin
+     31     end if
+     32     !    if(this_image()==1) then
+     33     !        write (*, '( / "Input test value: ")', advance="no" )
+     34     !        read (*, *) input
+     35     !    end if
+     36     syncall()
+     37     if (input== 0 ) then
+     38         i_ptr => rect
+     39     else
+     40         i_ptr => trap
+     41     end if
+     42     res=0.0
+     43     h=abs(ibeg-iend)/N
+     44 
+     45     !    write(*,*) ibeg,iend, h
+     46     !    write(*,*) f_ptr(h)
+     47 
+     48     do i=this_image(),N,num_images()
+     49     res=res+i_ptr(ibeg+(i-1)*h,ibeg+i*h,f_ptr,0)
+     50     end do
+     51     syncall()
+     52 
+     53     if(this_image()==1) then
+     54         do i=2,num_images()
+     55         res=res+res[i]
+     56         end do
+     57         write (*,*) "RESULT:",res
+
+Page 2           Source Listing                  MAIN
+2019-06-12 21:15                                 src/main.f90
+
+     58         write (*,*) "IMAGES:",num_images()
+     59     end if
+     60 
+     61     !procedure(fun_int):: sinus,square
+     62 
+     63 END PROGRAM MAIN
+
+
+ENTRY POINTS
+
+  Name              
+                    
+ MAIN__             
+
+
+SYMBOL CROSS REFERENCE
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ ABS                        Func   43                                   scalar                    43                                
+ ARG                        Local  12       CHAR            10          scalar                    14,15,16,17,18,19,20,21,22,23     
+ FUNC                       Local  10       I(4)            4           scalar                    23,25,27                          
+ F_PTR                      Func   6        R(8)            8           scalar   PTR              49                                
+ GET_COMMAND_ARGUMENT       Intrin 14                                                             14,16,18,20,22                    
+ H                          Local  8        R(8)            8           scalar                    43,49                             
+ I                          Local  10       I(4)            4           scalar                    48,49,54,55                       
+ IBEG                       Local  11       R(8)            8           scalar                    17,43,49                          
+ IEND                       Local  11       R(8)            8           scalar                    19,43                             
+ INPUT                      Local  10       I(4)            4           scalar                    15,37                             
+ INTERFACES                 Module 2                                                              2                                 
+ I_PTR                      Func   5        R(8)            8           scalar   PTR                                                
+ I_PTR                      Func   7        R(8)            8           scalar                    49                                
+ MAIN                       Prog   1                                                                                                
+ N                          Local  10       I(4)            4           scalar                    21,43,48                          
+ NUM_IMAGES                 Func   48                                   scalar                    48,54,58                          
+ RES                        Local  9        R(8)            8           scalar                    42,49,55,57                       
+ THIS_IMAGE                 Func   48                                   scalar                    48,53                             
+
+Page 3           Source Listing                  MAIN
+2019-06-12 21:15 Subprograms/Common Blocks       src/main.f90
+
+
+
+SUBPROGRAMS/COMMON BLOCKS
+
+ Name                       Object Declared Type            Bytes Dimen Elements Attributes       References                        
+                                                                                                                                    
+ MAIN                       Prog   1                                                                                                
+
+
+COMPILER: Intel(R) Fortran 19.0-1577
